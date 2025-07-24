@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\AdminRequest;
 use App\Models\Admin;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -17,9 +18,12 @@ class AdminController extends Controller
         return view('admin.admins.create');
     }
 
-    public function store(Request $request) {
-        Admin::create($request->all()); // ⚠️ Pastikan mass assignment aman
-        return redirect()->route('admins.index');
+    public function store(AdminRequest $request) {
+        $validatedData = $request->validated();
+        $validatedData['password'] = Hash::make($validatedData['password']);
+        
+        Admin::create($validatedData);
+        return redirect()->route('admins.index')->with('success', 'Admin created successfully');
     }
 
     public function edit($id) {
@@ -27,14 +31,22 @@ class AdminController extends Controller
         return view('admin.admins.edit', compact('admin'));
     }
 
-    public function update(Request $request, $id) {
+    public function update(AdminRequest $request, $id) {
         $admin = Admin::findOrFail($id);
-        $admin->update($request->all()); // ⚠️ Pastikan hanya field yang diperbolehkan
-        return redirect()->route('admins.index');
+        $validatedData = $request->validated();
+        
+        if ($validatedData['password'] ?? false) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        } else {
+            unset($validatedData['password']);
+        }
+        
+        $admin->update($validatedData);
+        return redirect()->route('admins.index')->with('success', 'Admin updated successfully');
     }
 
     public function destroy($id) {
         Admin::destroy($id);
-        return redirect()->route('admins.index');
+        return redirect()->route('admins.index')->with('success', 'Admin deleted successfully');
     }
 }

@@ -1,0 +1,59 @@
+version: '3'
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: team5ecommerce-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    environment:
+      DB_HOST: db
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - team5ecommerce
+
+  # Nginx Service
+  nginx:
+    image: nginx:alpine
+    container_name: team5ecommerce-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - team5ecommerce
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: team5ecommerce-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+    volumes:
+      - dbdata:/var/lib/mysql/
+    ports:
+      - "3306:3306"
+    networks:
+      - team5ecommerce
+
+networks:
+  team5ecommerce:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local
