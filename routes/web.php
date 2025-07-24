@@ -29,23 +29,23 @@ Route::middleware('auth')->group(function () {
 });
 
 //Route admin
-
-// admin
-// Route::get('/admin', [AdminController::class, 'edit'])->name('admin.dashboard');
-// Route::get('/admin', [AdminController::class, 'show'])->name('admin.dashboard');
+// Dashboard Admin
 Route::get('/admin', [ProductController::class, 'index'])->name('admin.dashboard');
-// Route::get('/product', [AdminController::class, 'index'])->name('admin.index');
-// Route::get('/product/{id}', [AdminController::class, 'show'])->name('admin.show');
-Route::get('/create', [AdminController::class, 'create'])->name('transfer.create');
-Route::post('/create', [AdminController::class, 'store'])->name('transfer.store');
+
+// // CRUD Produk di /admin/products
+// Route::get('/admin/products', [ProductController::class, 'index'])->name('admin.index');
+// Route::get('/admin/products/create', [ProductController::class, 'create'])->name('admin.Create');
+// Route::post('/admin/products', [ProductController::class, 'store'])->name('admin.store');
+
+// Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit'])->name('admin.Edit');
+// Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.update');
+
+// Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.Destroy');
 
 Route::resource('/product', ProductController::class);
 
-// Route::get('/admin', function () {
-//     return view('admin.dashboard');
-// });
-// Route::prefix('admin')->name('admin.')->group(function () {
-//     Route::resource('admin', AdminController::class);
-// });
+
+
+// Route::get('/admin/create', [ProductController::class, 'create'])->name('admin.Create');
 
 

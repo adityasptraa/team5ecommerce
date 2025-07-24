@@ -12,9 +12,9 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="bg-black">
+<body class="bg-black overflow-x-hidden">
     <div class="flex min-h-screen">
-        <aside class="w-64 flex-shrink-0 bg-gray-900 p-6">
+        <aside class="w-64 flex-shrink-0 bg-gray-800 p-6">
             <h1 class="text-2xl font-bold text-white mb-12">Welcome To<br>Admin Dashboard</h1>
             <nav class="space-y-4">
                 <a href="{{--{{ route('admin.Show') }} --}}" class="flex items-center px-4 py-2 rounded-md text-gray-300 hover:bg-gray-700 hover:text-white">
@@ -23,7 +23,7 @@
             </nav>
         </aside>
 
-        <div class="flex-1 flex flex-col bg-black">
+        <div class="flex-1 flex flex-col bg-gray-900">
             <header class="flex justify-end items-center p-4 border-b border-gray-800">
                 <div x-data="{ open: false }" class="relative">
                     <button @click="open = !open" class="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-800">
@@ -39,30 +39,42 @@
                         <a href="#" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Verification</a>
                         <a href="{{--{{ route('settings') }} --}}" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Settings</a>
                         <div class="border-t border-gray-700 my-1"></div>
-                        <a href="{{-- {{ route('logout') }} --}}" class="block px-4 py-2 text-sm text-red-400 hover:bg-gray-700">Log out</a>
+                        {{-- <a href="{{ route('logout') }}" class="block px-4 py-2 text-sm text-red-400 hover:bg-gray-700">Log out</a> --}}
                     </div>
                 </div>
             </header>
             
             <div class="container mx-auto">
                 <h1 class="text-3xl font-bold text-white mb-6 mt-6">Daftar Produk</h1>
+                <div class="mb-4 text-right">
+                    <a href="{{ route('product.create') }}"
+                    class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow">
+                        + Tambah Produk
+                    </a>
+                </div>
 
                 <!-- Header + Body Produk -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 bg-slate-300 p-10 rounded-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-x-6 bg-slate-300 p-10 rounded-2xl">
 
                     <!-- Header Kolom -->
                     <div class="w-full mx-auto">
                         <h3 class="text-sm font-medium text-gray-500">Nama Produk</h3>
                     </div>
                     <div class="w-full mx-auto">
-                        <h3 class="text-sm font-medium text-gray-500 text-center">Kategori</h3>
+                        <h3 class="text-sm font-medium text-gray-500 text-center">Harga</h3>
                     </div>
-                    <div class="w-full  text-right mr-10">
+                    <div class="w-full ml-24">
+                        <h3 class="text-sm font-medium text-gray-500">Deskripsi</h3>
+                    </div>
+                    <div class="w-full ml-28">
+                        <h3 class="text-sm font-medium text-gray-500">Img</h3>
+                    </div>
+                    <div class="w-full ml-28">
                         <h3 class="text-sm font-medium text-gray-500">Aksi</h3>
                     </div>
 
                     <!-- Data Produk -->
-                    @foreach ($products as $product)
+                     @foreach ($products as $product)
                         <!-- Nama Produk -->
                         <div class="w-full mt-4  p-4 ">
                             <p class="text-lg text-gray-900">{{ $product->name }}</p>
@@ -70,11 +82,25 @@
 
                         <!-- Kategori -->
                         <div class="w-full mt-4  p-4  text-center">
-                            <p class="text-lg text-gray-900">{{ $product->category }}</p>
+                            <p class="text-lg text-gray-900">{{ $product->price }}</p>
+                        </div>
+
+                        <div class="w-full mt-4  p-4  text-center">
+                            <p class="text-lg text-gray-900">{{ $product->description }}</p>
+                        </div>
+                        <!-- Gambar Produk -->
+                        <div class="w-full mt-4 p-4">
+                            @if ($product->img)
+                                <img src="{{ asset('storage/' . $product->img) }}" alt="{{ $product->name }}" class="w-full h-40 object-cover rounded-lg">
+                            @else
+                                <div class="w-full h-40 bg-gray-300 rounded-lg flex items-center justify-center text-gray-500">
+                                    Tidak ada gambar
+                                </div>
+                            @endif
                         </div>
 
                         <!-- Aksi -->
-                        <div class="mt-4  p-4  text-right space-x-2">
+                        <div class="mt-4  p-4  ml-20 space-x-2 ">
                             <a href="{{ route('product.edit', $product->id) }}" class="text-blue-600 hover:underline">Edit</a>
                             <form action="{{ route('product.destroy', $product->id) }}" method="POST" class="inline">
                                 @csrf
@@ -82,13 +108,16 @@
                                 <button type="submit" class="text-red-600 hover:underline">Hapus</button>
                             </form>
                         </div>
-                    @endforeach
 
+                        
+                    @endforeach 
+                    
+                    <p>Halaman {{ $products->currentPage() }} dari {{ $products->lastPage() }}</p>
+                </div>
+                <div class=" flex justify-center mt-6 ">
+                    {{ $products->links() }}
                 </div>
             </div>
-            {{-- <main class="flex-1 p-6 md:p-8 bg-gray-100 text-gray-800">
-                @yield('content')
-            </main> --}}
         </div>
     </div>
 </body>
